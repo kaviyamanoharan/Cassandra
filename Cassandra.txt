@@ -1,0 +1,133 @@
+cassandra
+cqlsh
+describe keyspaces
+CREATE KEYSPACE sampledemodb WITH replication ={'class': 'SimpleStrategy', 'replication_factor' :1};
+ALTER KEYSPACE sampledemodb WITH replication ={'class': 'NetworkTopologyStrategy', 'replication_factor' :1};
+describe keyspaces
+use sampledemodb;
+create table employee(
+                ... emp_id int PRIMARY KEY,
+                ... emp_name text,
+                ... emp_city text,
+                ... emp_phone varint,
+                ... emp_sal varint
+                ... );
+desribe employee;
+select * from employee;
+ emp_id | emp_city | emp_name | emp_phone | emp_sal
+--------+----------+----------+-----------+---------
+
+updating data into employee table:
+insert into employee (emp_id,emp_city,emp_name,emp_phone,emp_sal) values (1,'karur','karan',1234567890,100000);
+insert into employee (emp_id,emp_city,emp_name,emp_phone,emp_sal) values (2,'trichy','kumaran',1234567890,100000);
+insert into employee (emp_id,emp_city,emp_name,emp_phone,emp_sal) values (3,'chennai','Kavin',1234567890,100000);
+
+ emp_id | emp_city | emp_name | emp_phone  | emp_sal
+--------+----------+----------+------------+---------
+      1 |    karur |    karan | 1234567890 |  100000
+      2 |   trichy |  kumaran | 1234567890 |  100000
+      3 |  chennai |    Kavi | 1234567890 |  100000
+
+
+select * from employee where emp_id = 3;
+ emp_id | emp_city | emp_name | emp_phone  | emp_sal
+--------+----------+----------+------------+---------
+      3 |  chennai |    Kavi | 1234567890 |  100000
+
+UPDATE GOES WITH SET AND WHERE CLAUSE:
+update employee set emp_city ='delhi' where emp_id=2;
+select * from employee;
+
+select emp_name,emp_sal from employee;
+
+insert into employee (emp_id,emp_city,emp_name,emp_phone,emp_sal) values (4,'Hyderabad','irine',1234567890,120000);
+insert into employee (emp_id,emp_city,emp_name,emp_phone,emp_sal) values (5,'Mumbai','raghav',1234567890,120000);
+
+
+select * from employe;
+
+ emp_id | emp_city  | emp_name | emp_phone  | emp_sal
+--------+-----------+----------+------------+---------
+      5 |    Mumbai |   raghav | 1234567890 |  120000
+      1 |     karur |    karan | 1234567890 |  100000
+      2 |     delhi |  kumaran | 1234567890 |  100000
+      4 | Hyderabad |    irine | 1234567890 |  120000
+      3 |   chennai |    Kavi | 1234567890 |  100000
+
+delete emp_sal from employee where emp_id = 2;
+select* from employee;
+
+ emp_id | emp_city  | emp_name | emp_phone  | emp_sal
+--------+-----------+----------+------------+---------
+      5 |    Mumbai |   raghav | 1234567890 |  120000
+      1 |     karur |    karan | 1234567890 |  100000
+      2 |     delhi |  kumaran | 1234567890 |  null
+      4 | Hyderabad |    irine | 1234567890 |  120000
+      3 |   chennai |    Kavi | 1234567890 |  100000
+create table dept(
+dept_id int primary key,
+dept_name text,
+dept_project text,
+emp_phone varint
+);
+
+insert into dept (dept_id,dept_name,dept_project,emp_phone) values (1,'IT', 'recruitment',1234567890);
+insert into dept (dept_id,dept_name,dept_project,emp_phone) values (2,'HR', 'coordination',1234567890);
+insert into dept (dept_id,dept_name,dept_project,emp_phone) values (3,'Marketing', 'sales',1234567890);
+insert into dept (dept_id,dept_name,dept_project,emp_phone) values (4,'Finance', 'accounting',1234567890);
+
+select * from dept;
+
+ dept_id | dept_name | dept_project | emp_phone
+---------+-----------+--------------+------------
+       1 |        IT |  recruitment | 1234567890
+       2 |        HR | coordination | 1234567890
+       4 |   Finance |   accounting | 1234567890
+       3 | Marketing |        sales | 1234567890
+
+truncate dept;
+select * from dept;
+
+ dept_id | dept_name | dept_project | emp_phone
+---------+-----------+--------------+-----------
+
+create table data(name text primary key, email list<text>);
+describe data;
+
+insert into data(name,email) values('sam' , ['abda@gmail.com','ccdvd@gmail.com','erdf@gmail.com']);
+insert into data(name,email) values('Kaviya' , ['wwde@gmail.com','duhd@gmail.com']);
+insert into data(name,emauthor ttext,
+ail) values('sri' , ['cncks@gmail.com','gfgr@gmail.com']);
+insert into data(name,email) values('Sushmi' , ['cscnskj@gmail.com','jdnd@gmail.com','54534@gmail.com']);
+
+select * from data;
+
+ name   | email
+--------+------------------------------------------------------------
+    sri |                      ['cncks@gmail.com', 'gfgr@gmail.com']
+ Kaviya |                       ['wwde@gmail.com', 'duhd@gmail.com']
+    sam |    ['abda@gmail.com', 'ccdvd@gmail.com', 'erdf@gmail.com']
+ Sushmi | ['cscnskj@gmail.com', 'jdnd@gmail.com', '54534@gmail.com']
+
+Allow filtering demo:
+create table blogs (blogid int,
+time1 int,
+time2 int,
+author text,
+content text,
+primary key(blogid, time1, time2));
+
+select * from blogs;
+
+ blogid | time1 | time2 | author | content
+--------+-------+-------+--------+---------
+
+select * from blogs where time1 =141;
+InvalidRequest: Error from server: code=2200 [Invalid query] message="Cannot execute this query as it might involve data filtering and thus may have unpredictable performance. If you want to execute this query despite the performance unpredictability, use ALLOW FILTERING"
+
+select * from blogs where blogid = 1 and time2 =231 and time1 =141;
+select * from blogs where time1 =141 allow filtering;
+
+
+ blogid | time1 | time2 | author | content
+--------+-------+-------+--------+---------
